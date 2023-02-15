@@ -1,5 +1,6 @@
+import { createWidget, updateWidget } from "../controllers/widget.controller";
+
 import { Router } from "express";
-import { createWidget } from "../controllers/widget.controller";
 import { widgetModel } from "../models/widget.model";
 
 const widgetRouter = Router();
@@ -20,4 +21,7 @@ widgetRouter.post("/widget", (req, res) => {
   createWidget(req, res);
 });
 
+widgetRouter.put("/widget/:id", (req, res) => {
+  updateWidget(req, res);
+});
 export default widgetRouter;
