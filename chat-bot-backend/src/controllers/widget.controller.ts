@@ -27,23 +27,31 @@ const createWidget = async (req: Request, res: Response) => {
 const updateWidget = async (req: Request, res: Response) => {
   const { title, description, powered_by, language, theme } = req.body;
   const id = req.params.id;
-  //const usedTitle = await widgetModel.findOne(title);
+  const usedTitle = await widgetModel.findOne({
+    title,
+    description,
+    powered_by,
+    language,
+  });
+  if (!usedTitle) {
+    return widgetModel
+      .findById(id)
+      .then((widget) => {
+        if (widget) {
+          widget.set(req.body);
 
-  return widgetModel
-    .findById(id)
-    .then((widget) => {
-      if (widget) {
-        widget.set(req.body);
-
-        return widget
-          .save()
-          .then((widget) => res.status(201).json({ widget }))
-          .catch((error) => res.status(500).json({ error }));
-      } else {
-        return res.status(404).json({ message: "not found" });
-      }
-    })
-    .catch((error) => res.status(500).json({ error }));
+          return widget
+            .save()
+            .then((widget) => res.status(201).json({ widget }))
+            .catch((error) => res.status(500).json({ error }));
+        } else {
+          return res.status(404).json({ message: "not found" });
+        }
+      })
+      .catch((error) => res.status(500).json({ error }));
+  } else {
+    res.status(404).json({ message: "already exists" });
+  }
 };
 
 export { createWidget, updateWidget };
