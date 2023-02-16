@@ -1,18 +1,16 @@
-import { createWidget, updateWidget } from "../controllers/widget.controller";
+import {
+  createWidget,
+  getWidget,
+  updateWidget,
+} from "../controllers/widget.controller";
 
 import { Router } from "express";
 import { widgetModel } from "../models/widget.model";
 
 const widgetRouter = Router();
 
-widgetRouter.get("/widget", async (req, res) => {
-  // TODO logic for creating role
-  let data = await widgetModel.find({});
-  res.send({
-    success: true,
-    message: "Theme fetched successfully",
-    data,
-  });
+widgetRouter.get("/widget/:id", (req, res) => {
+  getWidget(req, res);
 });
 
 // widgetRouter.post("/widget", createWidget);
