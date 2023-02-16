@@ -31,7 +31,6 @@ const updateWidget = async (req: Request, res: Response) => {
     title,
     description,
     powered_by,
-    language,
   });
   if (!usedTitle) {
     return widgetModel

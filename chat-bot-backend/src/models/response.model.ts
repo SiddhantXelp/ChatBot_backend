@@ -1,6 +1,6 @@
 import { Document, Schema, model } from "mongoose";
 
-import { Response } from 'express';
+import { Response } from "express";
 
 // export interface ResponseDocument extends Response {
 //   id: string;
@@ -13,16 +13,14 @@ import { Response } from 'express';
 
 export interface Option {
   opId: string;
-  
 }
 export interface Resp {
-   uuid: string;
-   greeting:string,
-   option : Option,
-   content : string,
-   feedback : string
+  uuid: string;
+  greeting: string;
+  option: Option;
+  content: string;
+  feedback: string;
 }
-
 
 const responseSchema = new Schema<Resp>({
   uuid: {
@@ -40,7 +38,6 @@ const responseSchema = new Schema<Resp>({
   feedback: {
     type: "String",
   },
-
 });
 
 export const ResponseModel = model<Resp>("responses", responseSchema);
