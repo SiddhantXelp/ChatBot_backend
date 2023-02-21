@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import connects from "./config/db";
 import responseRouter from "./routes/response.routes";
 import widgetRouter from "./routes/widget.route";
+import  authRouter from "./routes/auth.route"
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger");
@@ -68,6 +69,8 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(widgetRouter);
 app.use(responseRouter);
+
+app.use("/auth",authRouter);
 
 app.get("/test", (req: Request, resp: Response): void => {
   resp.json({ data: "test page 1" });
