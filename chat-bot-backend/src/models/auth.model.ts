@@ -4,8 +4,15 @@ import { Schema, model } from "mongoose";
 export interface Auth {
   email: string,
   password: string,
-  firstName: string,
-  lastName:string
+  orgName: string,
+  phoneNumber: Number,
+  typeOfOrg: string,
+  street1: string,
+  street2: string,
+  city: string,
+  state: string,
+  country: string,
+  zipCode: Number
 }
 
 const authSchema = new Schema<Auth>({
@@ -17,11 +24,34 @@ const authSchema = new Schema<Auth>({
     type: "String",
     required: true
   },
-  firstName: {
-    type:"String"
+  orgName: {
+    type: "String",
+    required: true
   },
-  lastName:{
-    type:"String"
+  phoneNumber: {
+    type: "Number"
+  },
+  typeOfOrg: {
+    type: "String",
+    required: true
+  },
+  street1: {
+    type: "String"
+  },
+  street2: {
+    type: "String"
+  },
+  city: {
+    type: "String",
+    required: true
+  },
+  country: {
+    type: "String",
+    required: true
+  },
+  zipCode: {
+    type: "Number",
+    required: true
   }
 });
 

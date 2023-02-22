@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-
+import cors from "cors"
 import bodyParser from "body-parser";
 import connects from "./config/db";
 import responseRouter from "./routes/response.routes";
@@ -14,6 +14,7 @@ connects();
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
 // app.use(express.urlencoded({ extended: true }));
 
 const PORT = 4011;

@@ -6,16 +6,25 @@ import {sign} from "jsonwebtoken"
 
 
 const signup = async (req: Request, res: Response) =>{
-    const { email, password } = req.body;
-    if(!email || !password){
-        res.send({error:'Send Required Params'})
+    const { email, password,orgName,typeOfOrg,phoneNumber,street1,street2,city,country,zipCode } = req.body;
+    if(!email || !password || !orgName || !typeOfOrg || !city || !country || !zipCode ){
+        res.send({error:'Pass Required Params'})
     }
       const user = await AuthModel.findOne({email: email });
       bcrypt.hash(password, 10).then(async (hash)=>{
           if (!user) {
               let newUser = new AuthModel({
                   email: email,
-                  password: hash
+                  password: hash,
+                  orgName: orgName,
+                  typeOfOrg: typeOfOrg,
+                  phoneNumber: phoneNumber,
+                  street1: street1,
+                  street2: street2,
+                  city: city,
+                  country: country,
+                  zipCode: zipCode,
+                  
               });
               let saved = await newUser.save();
               console.log("new User:",saved);
@@ -27,7 +36,7 @@ const signup = async (req: Request, res: Response) =>{
               }
           }
           else{
-              res.send({ error: "User Already Exist" });
+              res.send({error:"User Already Exist"});
           }
       }).catch((err)=>{
           res.send({ error: err});
@@ -38,7 +47,7 @@ const signup = async (req: Request, res: Response) =>{
 const login = async (req: Request,res: Response)=>{
     const { email, password } = req.body;
     if(!email || !password){
-        res.send({error:"Send Required params"})
+        res.send({error:"Pass Required params"})
     }
   
     var user = await AuthModel.findOne({email: email });
