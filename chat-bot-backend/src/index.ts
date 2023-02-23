@@ -71,7 +71,7 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(widgetRouter);
 app.use(responseRouter);
 
-app.use("/auth",authRouter);
+app.use("/api/v1/auth",authRouter);
 
 app.get("/test", (req: Request, resp: Response): void => {
   resp.json({ data: "test page 1" });
