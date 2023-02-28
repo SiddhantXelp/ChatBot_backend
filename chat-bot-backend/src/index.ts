@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 
 import bodyParser from "body-parser";
 import connects from "./config/db";
+import cors from "cors";
 import responseRouter from "./routes/response.routes";
 import widgetRouter from "./routes/widget.route";
 
@@ -11,6 +12,7 @@ const swaggerDocument = require("./swagger");
 connects();
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // app.use(express.urlencoded({ extended: true }));
