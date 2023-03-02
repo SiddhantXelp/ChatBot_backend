@@ -15,22 +15,22 @@ export interface WelcomeScreen {
   title: string;
   titleColor: string;
   startButtonColor: string;
-  startButtonText: string;
+  // startButtonText: string;
 }
 
 export interface ChatScreen {
   headerBackground: string;
   hearderText: string;
   bgColor: string;
-  title: string;
+  // title?: string;
   titleColor: string;
   startButtonColor: string;
-  startButtonText: string;
-  welcomeMsg: string;
+  // startButtonText?: string;
+  // welcomeMsg?: string;
   welcomeMsgBgColor: string;
   welcomeMsgTextColor: string;
   userResponseBgColor: string;
-  userResponseText: string;
+  // userResponseText?: string;
   userResponseTextColor: string;
 }
 
@@ -45,7 +45,7 @@ export interface widgetDocument extends Widget {
   title: string;
   description: string;
   powered_by: string;
-  language: string;
+
   theme: Theme;
 }
 
@@ -54,7 +54,7 @@ export interface Widget {
   title: string;
   description: string;
   powered_by: string;
-  language: string;
+
   theme: Theme;
 }
 
@@ -78,9 +78,7 @@ const widgetSchema = new Schema<Widget>({
   powered_by: {
     type: "String",
   },
-  language: {
-    type: "String",
-  },
+
   theme: {
     minimizedWidget: {
       bgColor: {
@@ -109,9 +107,9 @@ const widgetSchema = new Schema<Widget>({
       startButtonColor: {
         type: "String",
       },
-      startButtonText: {
-        type: "String",
-      },
+      // startButtonText: {
+      //   type: "String",
+      // },
     },
     chatScreen: {
       headerBackground: {
@@ -123,21 +121,21 @@ const widgetSchema = new Schema<Widget>({
       bgColor: {
         type: "String",
       },
-      title: {
-        type: "String",
-      },
+      // title: {
+      //   type: "String",
+      // },
       titleColor: {
         type: "String",
       },
       startButtonColor: {
         type: "String",
       },
-      startButtonText: {
-        type: "String",
-      },
-      welcomeMsg: {
-        type: "String",
-      },
+      // startButtonText: {
+      //   type: "String",
+      // },
+      // welcomeMsg: {
+      //   type: "String",
+      // },
       welcomeMsgBgColor: {
         type: "String",
       },
@@ -147,9 +145,9 @@ const widgetSchema = new Schema<Widget>({
       userResponseBgColor: {
         type: "String",
       },
-      userResponseText: {
-        type: "String",
-      },
+      // userResponseText: {
+      //   type: "String",
+      // },
       userResponseTextColor: {
         type: "Date",
       },

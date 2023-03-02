@@ -18,7 +18,7 @@ const getWidget = async (req: Request, res: Response) => {
 };
 
 const createWidget = async (req: Request, res: Response) => {
-  const { title, description, powered_by, language, theme } = req.body;
+  const { title, description, powered_by, theme } = req.body;
 
   console.log("Req.Body", req.body);
 
@@ -26,7 +26,7 @@ const createWidget = async (req: Request, res: Response) => {
     title,
     description,
     powered_by,
-    language,
+
     theme,
   };
 
@@ -39,13 +39,12 @@ const createWidget = async (req: Request, res: Response) => {
 };
 
 const updateWidget = async (req: Request, res: Response) => {
-  const { title, description, powered_by, language, theme } = req.body;
+  const { title, description, powered_by, theme } = req.body;
   const id = req.params.id;
   const used = await widgetModel.findOne({
     title,
     description,
     powered_by,
-    language,
   });
   if (!used) {
     return widgetModel
