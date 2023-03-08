@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
-import cors from "cors"
+
+import { UserRequest } from "./models/userRequest.model";
 import bodyParser from "body-parser";
 import connects from "./config/db";
 import cors from "cors";
 import responseRouter from "./routes/response.routes";
+import userRequestRouter from "./routes/userRequest.routes";
 import widgetRouter from "./routes/widget.route";
 import  authRouter from "./routes/auth.route"
 
@@ -72,6 +74,7 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(widgetRouter);
 app.use(responseRouter);
+app.use(userRequestRouter);
 
 app.use("/api/v1/auth",authRouter);
 
