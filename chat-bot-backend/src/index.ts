@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
 
+import { UserRequest } from "./models/userRequest.model";
 import bodyParser from "body-parser";
 import connects from "./config/db";
 import cors from "cors";
 import responseRouter from "./routes/response.routes";
+import userRequestRouter from "./routes/userRequest.routes";
 import widgetRouter from "./routes/widget.route";
 
 const swaggerUi = require("swagger-ui-express");
@@ -70,6 +72,7 @@ app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(widgetRouter);
 app.use(responseRouter);
+app.use(userRequestRouter);
 
 app.get("/test", (req: Request, resp: Response): void => {
   resp.json({ data: "test page 1" });
