@@ -9,9 +9,10 @@ export interface UserRequest {
   tags: Array<any>;
   description: string;
   type:string;
-  requests: Array<any>;
+  children: Array<any>;
   isDeleted?: boolean;
-  delay:"String"
+  delay:String;
+  uuid: String
 }
 
 
@@ -40,7 +41,11 @@ const relationSchema: any = {
   delay: {
     type:"String"
   },
-  requests: [{ type: Schema.Types.ObjectId, ref: "requests" }],
+
+  uuid: {
+    type:"String"
+  },  
+  children: [{ type: Schema.Types.ObjectId, ref: "requests" }],
 };
 
 const responseSchema = new Schema<UserRequest>(relationSchema);

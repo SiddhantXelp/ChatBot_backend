@@ -10,8 +10,9 @@ import mongoose from "mongoose";
 
 const getUserRequest = async (req: Request, res: Response) => {
   console.log("hello");
-  const role = await UserRequestModel.find().populate("requests");
+  const role = await UserRequestModel.find().populate("children");
   console.log(role);
+
   if (!role) {
     return res.status(404).json({ message: `Request with id "" not found.` });
   }
@@ -23,7 +24,7 @@ const getUserRequestById = async (req: Request, res: Response) => {
   console.log("hello");
   const { id } = req.params;
 
-  const role = await UserRequestModel.findOne({ _id: id }).populate("requests");
+  const role = await UserRequestModel.findOne({ _id: id }).populate("children");
   console.log(role);
   if (!role) {
     return res.status(404).json({ message: `Request with id "" not found.` });
@@ -33,15 +34,17 @@ const getUserRequestById = async (req: Request, res: Response) => {
 };
 
 const createUserRequest = async (req: Request, res: Response) => {
-  const { title, tags, description, type, delay } = req.body;
-
-  const request = await UserRequestModel.findOne({
-    title: title,
+  const { uuid } = req.body;
+  //const id = req.params;
+  var newId = Math.random()
+  const userrequest = await UserRequestModel.findOne({
+    uuid: uuid,
   });
-
-  console.log(request);
-
-  if (!request) {
+  const request:any = await RequestModel.findOne({
+    uuid: uuid,
+  })
+  const { title, tags, description, type, delay } = req.body;
+  if (!userrequest && !request) {
     const UserRequest = new UserRequestModel({
       _id: new mongoose.Types.ObjectId(),
       tags: tags,
@@ -49,119 +52,173 @@ const createUserRequest = async (req: Request, res: Response) => {
       title: title,
       type: type,
       delay: delay,
+      uuid: uuid
     });
     console.log(UserRequest);
     UserRequest.save(function (err) {
       if (err) return handleError(err);
       const responsee = new RequestModel({
-        //  tags: UserRequest.tags,
-        Userequest: UserRequest._id,
-        tags: UserRequest.tags,
-        description: UserRequest.description,
-        title: UserRequest.title,
-        delay: UserRequest.delay,
+        _id: new mongoose.Types.ObjectId(),
+        tags: tags,
+        description: description,
+        title: title,
+        type: type,
+        delay: delay,
+        uuid: newId
       });
       responsee.save(function (err) {
         if (err) return handleError(err);
       });
-      console.log(responsee);
-      UserRequest.requests.push(responsee);
-      console.log(UserRequest);
-      UserRequest.save();
+      //console.log(responsee);
+      // UserRequest.children.push(responsee);
+      // console.log(UserRequest);
+      // UserRequest.save();
       res.status(201).json({ data: UserRequest });
     });
-  } else {
+  } else if (userrequest && !request) {
     const responsee = new RequestModel({
-      //tags: request.tags,
-      Userequest: request._id,
-      tags: request.tags,
-      description: request.description,
-      title: request.title,
-      delay: request.delay,
+      _id: new mongoose.Types.ObjectId(),
+      tags: tags,
+      description: description,
+      title: title,
+      type: type,
+      delay: delay,
+      uuid: newId
     });
     responsee.save(function (err) {
       if (err) return handleError(err);
     });
-    request.requests.push(responsee);
+    userrequest.children.push(responsee._id);
     console.log(request);
-    request.save();
+    userrequest.save();
     res.status(201).json({ data: responsee });
   }
-  // UserRequest.requests.push(responsee);
-  // UserRequest.save();
-};
+  else if(request&&!userrequest) {
+    const UserRequest = new UserRequestModel({
+      _id: new mongoose.Types.ObjectId(),
+      tags: request.tags,
+      description: request.description,
+      title: request.title,
+      type: request.type,
+      delay: request.delay,
+      uuid: request.uuid
+    });
+    console.log(UserRequest);
+    UserRequest.save(function (err) {
+      if (err) return handleError(err);
+      const responsee = new RequestModel({
+        _id: new mongoose.Types.ObjectId(),
+        tags: tags,
+        description: description,
+        title: title,
+        type: type,
+        delay: delay,
+        uuid: newId
+      });
+      responsee.save(function (err) {
+        if (err) return handleError(err);
+      });
+      //console.log(responsee);
+      UserRequest.children.push(responsee._id);
+      // console.log(UserRequest);
+       UserRequest.save();
+      res.status(201).json({ data: UserRequest });
 
-function handleError(err: NativeError): void {
-  throw new Error("Function not implemented.");
+    })
+    // UserRequest.requests.push(responsee);
+    // UserRequest.save();
+
+  }
+  else if(request&&userrequest)
+  {
+    const responsee = new RequestModel({
+      _id: new mongoose.Types.ObjectId(),
+      tags: tags,
+      description: description,
+      title: title,
+      type: type,
+      delay: delay,
+      uuid: newId
+    });
+    responsee.save(function (err) {
+      if (err) return handleError(err);
+    });
+    userrequest.children.push(responsee._id);
+    console.log(request);
+    userrequest.save();
+    res.status(201).json({ data: responsee });
+  }
+  
+  function handleError(err: NativeError): void {
+    throw new Error("Function not implemented.");
+  }
 }
+  const updateUserRequest = async (req: Request, res: Response) => {
+    const { title, tags, description, type, delay } = req.body;
+    const id = req.params.id;
+    const used = await UserRequestModel.findOne({
+      title,
+      description,
+      tags,
+      type,
+      delay,
+    });
+    if (!used) {
+      return UserRequestModel.findById(id)
+        .then((user) => {
+          if (user) {
+            user.set(req.body);
 
-const updateUserRequest = async (req: Request, res: Response) => {
-  const { title, tags, description, type, delay } = req.body;
-  const id = req.params.id;
-  const used = await UserRequestModel.findOne({
-    title,
-    description,
-    tags,
-    type,
-    delay,
-  });
-  if (!used) {
-    return UserRequestModel.findById(id)
-      .then((user) => {
-        if (user) {
-          user.set(req.body);
+            return user
+              .save()
+              .then((user) => res.status(201).json({ user }))
+              .catch((error) => res.status(500).json({ error }));
+          } else {
+            return res.status(404).json({ message: "not found" });
+          }
+        })
+        .catch((error) => res.status(500).json({ error }));
+    } else {
+      res.status(404).json({ message: "already exists" });
+    }
+  };
 
-          return user
-            .save()
-            .then((user) => res.status(201).json({ user }))
-            .catch((error) => res.status(500).json({ error }));
-        } else {
-          return res.status(404).json({ message: "not found" });
-        }
-      })
-      .catch((error) => res.status(500).json({ error }));
-  } else {
-    res.status(404).json({ message: "already exists" });
-  }
-};
+  const updateRequest = async (req: Request, res: Response) => {
+    const { title, tags, description, type, delay } = req.body;
+    const id = req.params.id;
+    //console.log(id);
+    const used = await RequestModel.findOne({
+      title,
+      description,
+      tags,
+      type,
+      delay,
+    });
+    //
+    console.log(used);
+    if (!used) {
+      return RequestModel.findById(id)
+        .then((request) => {
+          if (request) {
+            request.set(req.body);
 
-const updateRequest = async (req: Request, res: Response) => {
-  const { title, tags, description, type, delay } = req.body;
-  const id = req.params.id;
-  //console.log(id);
-  const used = await RequestModel.findOne({
-    title,
-    description,
-    tags,
-    type,
-    delay,
-  });
-  //
-  console.log(used);
-  if (!used) {
-    return RequestModel.findById(id)
-      .then((request) => {
-        if (request) {
-          request.set(req.body);
-
-          return request
-            .save()
-            .then((request) => res.status(201).json({ request }))
-            .catch((error) => res.status(500).json({ error }));
-        } else {
-          return res.status(404).json({ message: "not found" });
-        }
-      })
-      .catch((error) => res.status(500).json({ error }));
-  } else {
-    res.status(404).json({ message: "already exists" });
-  }
-};
-
-export {
-  createUserRequest,
-  getUserRequest,
-  getUserRequestById,
-  updateUserRequest,
-  updateRequest,
-};
+            return request
+              .save()
+              .then((request) => res.status(201).json({ request }))
+              .catch((error) => res.status(500).json({ error }));
+          } else {
+            return res.status(404).json({ message: "not found" });
+          }
+        })
+        .catch((error) => res.status(500).json({ error }));
+    } else {
+      res.status(404).json({ message: "already exists" });
+    }
+  };
+  export {
+    createUserRequest,
+    getUserRequest,
+    getUserRequestById,
+    updateUserRequest,
+    updateRequest,
+  };
