@@ -155,7 +155,7 @@ const createUserRequest = async (req: Request, res: Response) => {
 }
   const updateUserRequest = async (req: Request, res: Response) => {
     const { title, tags, description, type, delay } = req.body;
-    const id = req.params.id;
+    const uuid = req.params;
     const used = await UserRequestModel.findOne({
       title,
       description,
@@ -164,7 +164,7 @@ const createUserRequest = async (req: Request, res: Response) => {
       delay,
     });
     if (!used) {
-      return UserRequestModel.findById(id)
+      return UserRequestModel.findOne(uuid)
         .then((user) => {
           if (user) {
             user.set(req.body);
@@ -185,7 +185,7 @@ const createUserRequest = async (req: Request, res: Response) => {
 
   const updateRequest = async (req: Request, res: Response) => {
     const { title, tags, description, type, delay } = req.body;
-    const id = req.params.id;
+    const uuid = req.params;
     //console.log(id);
     const used = await RequestModel.findOne({
       title,
@@ -197,7 +197,7 @@ const createUserRequest = async (req: Request, res: Response) => {
     //
     console.log(used);
     if (!used) {
-      return RequestModel.findById(id)
+      return RequestModel.findOne(uuid)
         .then((request) => {
           if (request) {
             request.set(req.body);
