@@ -7,6 +7,7 @@ import { RequestModel } from "../models/request.model";
 import { Theme } from "./../models/widget.model";
 import { UserRequestModel } from "./../models/userRequest.model";
 import mongoose from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 const getUserRequest = async (req: Request, res: Response) => {
   //console.log("hello");
@@ -25,29 +26,25 @@ const getUserRequestById = async (req: Request, res: Response) => {
   // console.log("hello");
   const { id } = req.params;
 
-  const role = await UserRequestModel.findOne({ _id: id }).populate("children");
+  const role = await UserRequestModel.findOne({ uuid: id }).populate(
+    "children"
+  );
 
-  const role2 = await RequestModel.findOne({ _id: id }).populate("children");
+  const role2 = await RequestModel.findOne({ uuid: id }).populate("children");
   console.log(role);
-  if (!role&&!role2) {
+  if (!role && !role2) {
     return res.status(404).json({ message: `Request with id "" not found.` });
+  } else if (role) {
+    return res.status(200).json({ data: role });
+  } else if (role2) {
+    return res.status(200).json({ data: role2 });
   }
-  else if(role)
-  {
-    return res.status(404).json({ data:role} );
-  }
-  else if(role2)
-  {
-    return res.status(404).json({ data:role2});
-  }
-
-  return res.status(200).json({ data: role });
 };
 
 const createUserRequest = async (req: Request, res: Response) => {
   const { uuid } = req.body;
   //const id = req.params;
-  var newId = Math.random();
+  var newId = uuidv4();
   const userrequest = await UserRequestModel.findOne({
     uuid: uuid,
   });
@@ -160,17 +157,32 @@ const createUserRequest = async (req: Request, res: Response) => {
   }
 };
 const updateUserRequest = async (req: Request, res: Response) => {
-  const { title, tags, description, type, delay } = req.body;
-  const uuid = req.params;
-  const used = await UserRequestModel.findOne({
-    title,
-    description,
-    tags,
-    type,
-    delay,
-  });
-  if (!used) {
-    return UserRequestModel.findOne(uuid)
+  const { title, tags, description, type, delay, uuid } = req.body;
+  const { id } = req.params;
+  const used = await UserRequestModel.findOne({ uuid: id });
+  console.log(used);
+  //     title,
+  //     description,
+  //     tags,
+  //     type,
+  //     delay,
+  //     uuid,
+  //   });
+  const used1 = await RequestModel.findOne({ uuid: id }); 
+  console.log("used1", used1)
+  
+  //     title,
+  //     description,
+  //     tags,
+  //     type,
+  //     delay,
+  //     uuid
+  //   if (used && used1) {
+
+  //   }
+  if (used && used1) {
+    console.log("helllo");
+    const a = UserRequestModel.findOne({ uuid: id })
       .then((user) => {
         if (user) {
           user.set(req.body);
@@ -180,30 +192,11 @@ const updateUserRequest = async (req: Request, res: Response) => {
             .then((user) => res.status(201).json({ user }))
             .catch((error) => res.status(500).json({ error }));
         } else {
-          return res.status(404).json({ message: "not found" });
+          return res.status(404).json({ message: "not found for userRequest" });
         }
       })
-      .catch((error) => res.status(500).json({ error }));
-  } else {
-    res.status(404).json({ message: "already exists" });
-  }
-};
-
-const updateRequest = async (req: Request, res: Response) => {
-  const { title, tags, description, type, delay } = req.body;
-  const uuid = req.params;
-  //console.log(id);
-  const used = await RequestModel.findOne({
-    title,
-    description,
-    tags,
-    type,
-    delay,
-  });
-  //
-  console.log(used);
-  if (!used) {
-    return RequestModel.findOne(uuid)
+      .catch((error) => res.status(500).json({ error: "user" }));
+    const b = RequestModel.findOne({ uuid: id })
       .then((request) => {
         if (request) {
           request.set(req.body);
@@ -213,18 +206,86 @@ const updateRequest = async (req: Request, res: Response) => {
             .then((request) => res.status(201).json({ request }))
             .catch((error) => res.status(500).json({ error }));
         } else {
-          return res.status(404).json({ message: "not found" });
+          return res.status(404).json({ message: "not found for request" });
         }
       })
-      .catch((error) => res.status(500).json({ error }));
-  } else {
+      .catch((error) => res.status(500).json({ error: "child" }));
+    return { a, b };
+  } else if (used) {
+    console.log("helllo11");
+    return UserRequestModel.findOne({ uuid: id })
+      .then((request) => {
+        if (request) {
+          request.set(req.body);
+
+          return request
+            .save()
+            .then((request) => res.status(201).json({ request }))
+            .catch((error) => res.status(500).json({ error }));
+        } else {
+          return res.status(404).json({ message: "not found for request" });
+        }
+      })
+      .catch((error) => res.status(500).json({ error: "child" }));
+  } else if (used1) {
+    return RequestModel.findOne({ uuid: id })
+      .then((request) => {
+        if (request) {
+          request.set(req.body);
+
+          return request
+            .save()
+            .then((request) => res.status(201).json({ request }))
+            .catch((error) => res.status(500).json({ error }));
+        } else {
+          return res.status(404).json({ message: "not found for request" });
+        }
+      })
+      .catch((error) => res.status(500).json({ error: "child" }));
+  }
+  if (!used && !used1) {
     res.status(404).json({ message: "already exists" });
   }
 };
+
+// const updateRequest = async (req: Request, res: Response) => {
+//   const { title, tags, description, type, delay, uuid } = req.body;
+//   const id = req.params;
+//   //console.log(id);
+//   const used = await RequestModel.findOne({
+//     title,
+//     description,
+//     tags,
+//     type,
+//     delay,
+//   });
+//   //
+//   console.log(used);
+//   if (!used) {
+//     return RequestModel.findOne({ uuid: id })
+//       .then((request) => {
+//         if (request) {
+//           request.set(req.body);
+
+//           return request
+//             .save()
+//             .then((request) => res.status(201).json({ request }))
+//             .catch((error) => res.status(500).json({ error }));
+//         } else {
+//           return res.status(404).json({ message: "not found" });
+//         }
+//       })
+//       .catch((error) => res.status(500).json({ error }));
+//   } else {
+//     res.status(404).json({ message: "already exists" });
+//   }
+// };
 export {
   createUserRequest,
   getUserRequest,
   getUserRequestById,
   updateUserRequest,
-  updateRequest,
 };
+function handleError(err: NativeError): void {
+  throw new Error("Function not implemented.");
+}

@@ -2,7 +2,6 @@ import {
     createUserRequest,
     getUserRequest,
     getUserRequestById,
-    updateRequest,
     updateUserRequest,
 } from "../controllers/userRequest.controller";
 
@@ -24,9 +23,9 @@ const userRequestRouter = Router();
     createUserRequest(req, res);
   });
   
-  userRequestRouter.put("/r/:id", (req, res) => {
-      updateRequest(req, res);
-    });
+//   userRequestRouter.put("/r/:id", (req, res) => {
+//       updateRequest(req, res);
+//     });
   userRequestRouter.put("/userRequest/:id", (req, res) => {
     updateUserRequest(req, res);
   });
