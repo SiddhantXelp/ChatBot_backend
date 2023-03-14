@@ -182,7 +182,7 @@ const updateUserRequest = async (req: Request, res: Response) => {
   //   }
   if (used && used1) {
     console.log("helllo");
-    const a = UserRequestModel.findOne({ uuid: id })
+    const a = await UserRequestModel.findOne({ uuid: id })
       .then((user) => {
         if (user) {
           user.set(req.body);
@@ -196,7 +196,7 @@ const updateUserRequest = async (req: Request, res: Response) => {
         }
       })
       .catch((error) => res.status(500).json({ error: "user" }));
-    const b = RequestModel.findOne({ uuid: id })
+    const b = await RequestModel.findOne({ uuid: id })
       .then((request) => {
         if (request) {
           request.set(req.body);
@@ -213,7 +213,7 @@ const updateUserRequest = async (req: Request, res: Response) => {
     return { a, b };
   } else if (used) {
     console.log("helllo11");
-    return UserRequestModel.findOne({ uuid: id })
+    return await UserRequestModel.findOne({ uuid: id })
       .then((request) => {
         if (request) {
           request.set(req.body);
@@ -228,7 +228,7 @@ const updateUserRequest = async (req: Request, res: Response) => {
       })
       .catch((error) => res.status(500).json({ error: "child" }));
   } else if (used1) {
-    return RequestModel.findOne({ uuid: id })
+    return await RequestModel.findOne({ uuid: id })
       .then((request) => {
         if (request) {
           request.set(req.body);
